@@ -1,8 +1,15 @@
-var url = 'https://hexschool.github.io/js-filter-data/data.json';
-var data;
+/* global axios */
+
+const url = 'https://hexschool.github.io/js-filter-data/data.json';
+let resData;
+const table = document.querySelector('.table-content');
+let showData = [];
+
+let category = '';
+const filter = document.querySelector('.filter');
 
 const renderData = (data) => {
-  let str = "";
+  let str = '';
   data.forEach((b) => {
     const content = `<tr><td>${b.作物名稱}
     </td><td>${b.市場名稱}
@@ -13,35 +20,21 @@ const renderData = (data) => {
     </td><td>${b.交易量}
     </td></tr>`;
     str += content;
-  })
-  return str;
-}
-
-axios.get(url)
-  .then(function (res) {
-    data = res.data.filter(a => a.作物名稱);
-    const str = renderData(data);
-    table.innerHTML = str;
-  })
-
-var table = document.querySelector(".table-content");
-var showData = [];
-
-var category = "";
-var filter = document.querySelector(".filter");
-
-filter.addEventListener("click", filterCategory);
+  });
+  table.innerHTML = str;
+};
 
 function filterCategory(e) {
-  if (e.target.nodeName == "BUTTON") {
+  if (e.target.nodeName === 'BUTTON') {
     category = e.target.dataset.category;
-    showData = data.filter((i) => {
-      return i.種類代碼 == category;
-    })
-    const str = renderData(showData);
-    table.innerHTML = str;
-  } else {
-    return;
+    showData = resData.filter((i) => i.種類代碼 === category);
+    renderData(showData);
   }
 }
 
+filter.addEventListener('click', filterCategory);
+
+axios.get(url).then((res) => {
+  resData = res.data.filter((a) => a.作物名稱);
+  renderData(resData);
+});
